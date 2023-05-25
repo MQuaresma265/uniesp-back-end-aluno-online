@@ -50,4 +50,9 @@ public class DisciplinaController {
         Disciplina disciplinaAtualizada = service.update(id, disciplina);
         return ResponseEntity.ok(disciplinaAtualizada);
     }
+    @GetMapping("/professor/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Disciplina> findByProfessorId(@PathVariable Long id) {
+        return service.findByProfessorId(id);
+    }
 }

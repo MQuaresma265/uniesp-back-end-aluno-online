@@ -19,6 +19,9 @@ public class DisciplinaService {
     public Disciplina create(Disciplina disciplina) {
         return repository.save(disciplina);
     }
+    public List<Disciplina> findByProfessorId(Long professorId) {
+        return repository.findByProfessorId(professorId);
+    }
 
     public List<Disciplina> findAll() {
         return repository.findAll();
