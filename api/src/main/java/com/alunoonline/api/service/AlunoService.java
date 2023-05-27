@@ -2,7 +2,6 @@ package com.alunoonline.api.service;
 
 import com.alunoonline.api.model.Aluno;
 import com.alunoonline.api.repository.AlunoRepository;
-import org.hibernate.sql.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +15,7 @@ public class AlunoService {
     AlunoRepository repository;
 
     public Aluno create(Aluno aluno) {
+
         return repository.save(aluno);
     }
 
@@ -23,19 +23,22 @@ public class AlunoService {
         return repository.findAll();
     }
 
-    public Optional<Aluno> findById(Long id){
+    public Optional<Aluno> findById(Long id) {
         return repository.findById(id);
-
     }
 
-    public void delete(Long id){
+    public void delete(Long id) {
         repository.deleteById(id);
-
     }
-
     public Aluno update(Aluno aluno) {
-        return repository.save(aluno);
+        Optional<Aluno> alunoOptional = repository.findById(aluno.getId());
+        if (alunoOptional.isPresent()) {
+            Aluno alunoExistente = alunoOptional.get();
+            alunoExistente.setNome(aluno.getNome());
+            alunoExistente.setEmail(aluno.getEmail());
+            return repository.save(alunoExistente);
+        } else {
+            throw new IllegalArgumentException("Aluno não encontrado");
+        }
     }
-
 }
-
