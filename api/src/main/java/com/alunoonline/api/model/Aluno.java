@@ -10,20 +10,15 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Entity
 public class Aluno implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String nome;
-
-    private String email;
-
     private String curso;
-
+    private String email;
 }

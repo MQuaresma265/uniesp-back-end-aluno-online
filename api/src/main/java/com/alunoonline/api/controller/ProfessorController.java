@@ -1,5 +1,6 @@
 package com.alunoonline.api.controller;
 
+import com.alunoonline.api.model.Aluno;
 import com.alunoonline.api.model.Professor;
 import com.alunoonline.api.service.ProfessorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,41 +17,60 @@ public class ProfessorController {
 
     @Autowired
     ProfessorService service;
-
     @PostMapping
+    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Professor> create(@RequestBody Professor professor) {
+    public ResponseEntity<Professor> create(@RequestBody Professor professor){
         Professor professorCreated = service.create(professor);
-
         return ResponseEntity.status(201).body(professorCreated);
     }
 
-    @GetMapping("/{id}")
+    @PatchMapping("/{id}")
+    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseStatus(HttpStatus.OK)
-    public Optional<Professor> findById(@PathVariable Long id) {
+    public ResponseEntity<Professor> update(@PathVariable Long id, @RequestBody Professor professorUpdated){
+        Optional<Professor> optionalProfessor = service.findById(id);
+        if (optionalProfessor.isPresent()){
+            Professor professor = optionalProfessor.get();
+
+            String nomeAtualizado = professorUpdated.getNome();
+            String emailAtualizado = professorUpdated.getEmail();
+
+            // Verificar se o nome foi fornecido na requisição
+            if (nomeAtualizado != null && !nomeAtualizado.isEmpty()) {
+                professor.setNome(nomeAtualizado);
+            }
+
+            // Verificar se o email foi fornecido na requisição
+            if (emailAtualizado != null && !emailAtualizado.isEmpty()) {
+                professor.setEmail(emailAtualizado);
+            }
+
+            service.save(professor);
+            return ResponseEntity.ok(professor);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{id}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    @ResponseStatus(HttpStatus.OK)
+    public Optional<Professor> findById(@PathVariable Long id){
         return service.findById(id);
     }
 
     @GetMapping("/all")
+    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseStatus(HttpStatus.OK)
-    public List<Professor> findAll() {
+    public List<Professor> findAll(){
         return service.findAll();
     }
 
     @DeleteMapping("/{id}")
+    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
-        service.delete(id);
-    }
-    @PutMapping("/{id}")
-    public ResponseEntity<Professor> update(@PathVariable Long id, @RequestBody Professor professor) {
-        Optional<Professor> professorOptional = service.findById(id);
-        if (professorOptional.isPresent()) {
-            professor.setId(id);
-            Professor professorAtualizado = service.update(professor);
-            return ResponseEntity.ok(professorAtualizado);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public void deleteById(@PathVariable Long id){
+        service.deleteById(id);
     }
 }

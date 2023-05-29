@@ -7,19 +7,18 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Entity
-public class Disciplina implements Serializable {
+public class Disciplina  implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long Id;
 
     private String nome;
-
     @ManyToOne
-    @JoinColumn(name = "professor_id")
+    @JoinColumn(name= "professor_id")
     private Professor professor;
 }

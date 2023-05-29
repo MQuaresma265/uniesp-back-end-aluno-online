@@ -6,10 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class MatriculaAluno implements Serializable {
 
@@ -30,6 +29,4 @@ public class MatriculaAluno implements Serializable {
     private Disciplina disciplina;
 
     private String status;
-
-
 }

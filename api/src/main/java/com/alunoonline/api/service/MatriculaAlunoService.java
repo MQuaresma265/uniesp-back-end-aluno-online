@@ -17,14 +17,18 @@ import java.util.Optional;
 @Service
 public class MatriculaAlunoService {
 
-    static final Double GRADEAVGTOAPPROVE = 7.0;
-
+    static final Double gradesAvgToApprove = 7.00;
     @Autowired
     MatriculaAlunoRepository repository;
 
     public MatriculaAluno create(MatriculaAluno matriculaAluno) {
+        matriculaAluno.setStatus("MATRICULADO");
         return repository.save(matriculaAluno);
     }
+
+    public MatriculaAluno save(MatriculaAluno matriculaAluno){ return repository.save(matriculaAluno);}
+    public Optional<MatriculaAluno> findById(Long id){return repository.findById(id);}
+
     public void updateGrades(AtualizarNotasRequestDto atualizarNotasRequestDto, Long matriculaAlunoId) {
         Optional<MatriculaAluno> matriculaAlunoToUpdate = repository.findById(matriculaAlunoId);
 
@@ -42,7 +46,7 @@ public class MatriculaAlunoService {
             if (matriculaAluno.getNota1() != null && matriculaAluno.getNota2() != null) {
                 double average = (matriculaAluno.getNota1() + matriculaAluno.getNota2()) / 2.0;
 
-                if (average >= GRADEAVGTOAPPROVE) {
+                if (average >= gradesAvgToApprove) {
                     matriculaAluno.setStatus("APROVADO");
                 } else {
                     matriculaAluno.setStatus("REPROVADO");
@@ -52,23 +56,24 @@ public class MatriculaAlunoService {
             repository.save(matriculaAluno);
         }
     }
-    public void updateStatusToBreak(Long matriculaAlunoId) {
-        Optional<MatriculaAluno> matriculaAlunoToUpdate = repository.findById(matriculaAlunoId);
 
-        if (matriculaAlunoToUpdate.isPresent()) {
+    public void atualizarStatusParaTrancado(Long matriculaId){
+        Optional<MatriculaAluno> matriculaAlunoToUpdate = repository.findById(matriculaId);
+
+        if(matriculaAlunoToUpdate.isPresent()){
             MatriculaAluno matriculaAluno = matriculaAlunoToUpdate.get();
             String currentStatus = matriculaAluno.getStatus();
-
-            if (currentStatus.equals("MATRICULADO")) {
+            if(currentStatus.equals("MATRICULADO")){
                 matriculaAluno.setStatus("TRANCADO");
                 repository.save(matriculaAluno);
-            } else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Só é possível trancar uma matrícula com status MATRICULADO.");
+            }else{
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Só é possível trancar uma matrícula com status MATRICULADO");
             }
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Matrícula não encontrada.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Matrícula não encontrada!");
         }
     }
+
     public HistoricoAlunoDto getHistoricoFromAluno(Long alunoId) {
         List<MatriculaAluno> matriculasDoAluno = repository.findByAlunoId(alunoId);
 
@@ -87,7 +92,7 @@ public class MatriculaAlunoService {
                 disciplinasAlunoDto.setNota1(matricula.getNota1());
                 disciplinasAlunoDto.setNota2(matricula.getNota2());
                 if ((matricula.getNota1() != null && matricula.getNota2() != null)) {
-                    disciplinasAlunoDto.setMedia(matricula.getNota1() + matricula.getNota2() / 2);
+                    disciplinasAlunoDto.setMedia((matricula.getNota1() + matricula.getNota2()) / 2);
                 } else {
                     disciplinasAlunoDto.setMedia(null);
                 }
